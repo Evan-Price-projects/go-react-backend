@@ -1,5 +1,8 @@
 package user_management
 
-func login() string {
-	return "Hey"
+import (
+	"github.com/gin-gonic/gin"
+)
+
+func Login(c *gin.Context) {
 }

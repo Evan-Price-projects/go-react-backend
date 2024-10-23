@@ -1,5 +1,7 @@
 package user_management
 
-func logout() {
+import "github.com/gin-gonic/gin"
+
+func Logout(c *gin.Context) {
 
 }

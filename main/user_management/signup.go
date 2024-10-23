@@ -1,5 +1,7 @@
 package user_management
 
-func signup() {
+import "github.com/gin-gonic/gin"
+
+func Signup(c *gin.Context) {
 
 }
