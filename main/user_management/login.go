@@ -7,5 +7,5 @@ import (
 )
 
 func Login(c *gin.Context) {
-	fmt.Print("Hey")
+	fmt.Print("Heys")
 }
