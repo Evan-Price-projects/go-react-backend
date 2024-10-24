@@ -10,20 +10,17 @@ import (
 
 func LoginAPI() {
 	router := gin.Default()
+
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
-		AllowMethods:     []string{"PUT", "PATCH", "GET"},
-		AllowHeaders:     []string{"Origin"},
-		ExposeHeaders:    []string{"Content-Length"},
+		AllowOrigins:     []string{"*"}, // For development
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Content-Type"},
 		AllowCredentials: true,
-		AllowOriginFunc: func(origin string) bool {
-			return origin == "https://github.com"
-		},
-		MaxAge: 12 * time.Hour,
+		MaxAge:           12 * time.Hour,
 	}))
 	router.POST("/login", user_management.Login)
 	router.POST("/logout", user_management.Logout)
 	router.POST("/signup", user_management.Signup)
 
-	router.Run("localhost:8080")
+	router.Run("0.0.0.0:8080")
 }
