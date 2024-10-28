@@ -30,7 +30,7 @@ func LoginAPI() {
 	r.POST("/signup", user_management.Signup)
 
 	log.Printf("Server starting on port 8080...")
-	if err := r.Run(":8080"); err != nil {
+	if err := r.Run("0.0.0.0:8080"); err != nil {
 		log.Fatal(err)
 	}
 }
