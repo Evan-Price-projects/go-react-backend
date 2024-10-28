@@ -1,7 +1,8 @@
 package login_controller
 
 import (
-	"time"
+	"log"
+	"net/http"
 
 	"github.com/Evan-Price-projects/go-react-backend/main/user_management"
 	"github.com/gin-contrib/cors"
@@ -9,18 +10,47 @@ import (
 )
 
 func LoginAPI() {
-	router := gin.Default()
+	r := gin.Default()
 
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"}, // For development
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Content-Type"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-	}))
-	router.POST("/login", user_management.Login)
-	router.POST("/logout", user_management.Logout)
-	router.POST("/signup", user_management.Signup)
+	// CORS middleware
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"*"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
+	r.Use(cors.New(config))
 
-	router.Run("0.0.0.0:8080")
+	// Health check
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, Response{Message: "healthy"})
+	})
+
+	// Public routes
+	r.POST("/login", user_management.Login)
+	r.POST("/logout", user_management.Logout)
+	r.POST("/signup", user_management.Signup)
+
+	log.Printf("Server starting on port 8080...")
+	if err := r.Run(":8080"); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func authMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.GetHeader("Authorization")
+		if token == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, Response{
+				Error: "Authorization required",
+			})
+			return
+		}
+		// Verify JWT token here
+		// If valid, call c.Next()
+		c.Next()
+	}
+}
+
+type Response struct {
+	Message string `json:"message,omitempty"`
+	Error   string `json:"error,omitempty"`
 }
