@@ -5,5 +5,6 @@ import (
 )
 
 func main() {
-	login_controller.LoginAPI()
+
+	login_controller.Controllers()
 }
