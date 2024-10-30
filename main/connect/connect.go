@@ -22,7 +22,7 @@ var (
 func Connect() (*DBConnection, error) {
 	once.Do(func() {
 		// Retrieve the connection details from environment variables
-		host := "postgres" // The service name of the PostgreSQL instance
+		host := "postgres-service" // The service name of the PostgreSQL instance
 		port := "5432"
 		user := os.Getenv("POSTGRES_USER")
 		password := os.Getenv("POSTGRES_PASSWORD")

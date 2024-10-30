@@ -12,19 +12,38 @@ func Create_Allergen_Table() {
 		log.Fatal(err)
 	}
 	_, err = db.Db.Query(`
-	Drop table if exists allergen;
-	CREATE TABLE IF NOT EXISTS allergen (
-    id VARCHAR(255) PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS allergen (
+    id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-	level INT,
-    deleted BOOLEAN,
-    date_deleted TIMESTAMP);`)
+    level INT,
+    deleted BOOLEAN DEFAULT FALSE,
+    date_deleted TIMESTAMP
+);`)
 	if err != nil {
 		log.Fatal(err)
 	}
 	_, err = db.Db.Exec(
-		"INSERT INTO allergen (id, name, deleted, level, date_deleted) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (id) DO NOTHING",
-		0, "Peanut", false, nil, nil,
+		`
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'allergen_name_unique' 
+        AND conrelid = 'allergen'::regclass
+    ) THEN
+        ALTER TABLE allergen ADD CONSTRAINT allergen_name_unique UNIQUE (name);
+    END IF;
+END $$;
+`,
+	)
+
+	if err != nil {
+		log.Fatalf("Failed to alter table: %v", err)
+	}
+	_, err = db.Db.Exec(
+		`
+		INSERT INTO allergen (name, deleted, level, date_deleted) VALUES ($1, $2, $3, $4) ON CONFLICT (name) DO NOTHING`,
+		"Peanut", false, nil, nil,
 	)
 
 	if err != nil {

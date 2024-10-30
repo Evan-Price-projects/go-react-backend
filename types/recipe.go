@@ -1,13 +1,37 @@
 package types
 
-import "time"
+import (
+	"time"
+)
 
 type Recipe struct {
-	Id          string
+	Id          int
 	Name        string
-	Ingredients []string
+	RecipeItems [][]int
 	Grouping    []string
 	Deleted     bool
 	DateDeleted time.Time
 	CreatedBy   string
+	Allergens   []int
+}
+
+type RecipeItem struct {
+	Id         int
+	Ingredient int
+	Action     int
+}
+
+type Action struct {
+	Id             int
+	ThingBeingDone int
+	ActionItem     int
+}
+type ThingBeingDone struct {
+	Id             int
+	ThingBeingDone string
+}
+
+type ActionItem struct {
+	Id         int
+	ActionItem string
 }

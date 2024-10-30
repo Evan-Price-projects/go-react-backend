@@ -7,9 +7,6 @@ import (
 
 func Allergen_Controller(r *gin.Engine) {
 
-	// r.GET("/allergen", func(c *gin.Context) {
-	// 	c.JSON(http.StatusOK, recipe.Get_Allergen(c.Query("allergen")))
-	// })
 	r.GET("/allergens", recipe.Get_Allergens)
 
 	r.POST("/allergen", recipe.Add_Allergen)

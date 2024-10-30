@@ -1,10 +1,13 @@
 package types
 
-import "time"
+import (
+	"database/sql"
+)
 
+// Fruit, Veggies
 type Food_Type struct {
-	Id          string `json:"id"`
-	Name        string `json:"name"`
-	Deleted     bool
-	DateDeleted time.Time
+	Id          int          `json:"id"`
+	Name        string       `json:"name"`
+	Deleted     bool         `json:"deleted"`
+	DateDeleted sql.NullTime `json:"dateDeleted"`
 }

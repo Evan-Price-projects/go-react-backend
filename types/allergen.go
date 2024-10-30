@@ -5,7 +5,7 @@ import (
 )
 
 type Allergen struct {
-	Id          string        `json:"id"`
+	Id          int           `json:"id"`
 	Name        string        `json:"name"`
 	Deleted     bool          `json:"deleted"`
 	Level       sql.NullInt64 `json:"level"`

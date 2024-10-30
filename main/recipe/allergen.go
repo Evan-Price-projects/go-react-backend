@@ -12,6 +12,14 @@ import (
 
 // GET
 func Get_Allergens(c *gin.Context) {
+	allergens, err := Get_Allergens_Internal(c)
+	if err != nil {
+		log.Fatal(err)
+	}
+	c.JSON(http.StatusOK, allergens)
+}
+
+func Get_Allergens_Internal(c *gin.Context) ([]types.Allergen, error) {
 	connection, err := connect.Connect()
 	if err != nil {
 		log.Fatal(err)
@@ -35,8 +43,7 @@ func Get_Allergens(c *gin.Context) {
 	if err := rows.Err(); err != nil {
 		log.Fatalf("Error iterating over rows: %v", err)
 	}
-
-	c.JSON(http.StatusOK, allergens)
+	return allergens, nil
 }
 
 // func Get_Allergen(c string) *gin.HandlerFunc {
@@ -45,7 +52,27 @@ func Get_Allergens(c *gin.Context) {
 
 // Post
 func Add_Allergen(c *gin.Context) {
-
+	var allergen string
+	// Attempt to bind the JSON request body to our struct
+	if err := c.ShouldBindJSON(&allergen); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	connection, err := connect.Connect()
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = connection.Db.Exec("INSERT INTO allergen (name, deleted, level, date_deleted) VALUES ($1, $2, $3, $4) ON CONFLICT (id) DO NOTHING",
+		allergen, false, nil, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	c.JSON(http.StatusCreated, gin.H{
+		"message":  "allergen created successfully",
+		"allergen": allergen,
+	})
 }
 
 func Add_Allergens(c *gin.Context) {
